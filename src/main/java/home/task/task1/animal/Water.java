@@ -1,4 +1,4 @@
-package home.task.animal;
+package home.task.task1.animal;
 
 public interface Water {
     default void liveInWater() {

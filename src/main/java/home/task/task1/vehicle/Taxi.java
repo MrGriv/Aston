@@ -1,4 +1,4 @@
-package home.task.vehicle;
+package home.task.task1.vehicle;
 
 public class Taxi extends Vehicle implements Wheel {
 }
