@@ -1,4 +1,4 @@
-package home.task.vehicle;
+package home.task.task1.vehicle;
 
 public abstract class Vehicle {
 }
