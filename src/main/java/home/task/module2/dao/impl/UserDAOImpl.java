@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Properties;
 
 public class UserDAOImpl implements UserDAO {
+    private static final String GET_ALL_USERS_SQL = "FROM User";
+
     private SessionFactory sessionFactory;
     private final String url;
     private final String password;
@@ -102,7 +104,8 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public List<User> getAll() {
         try (Session session = sessionFactory.openSession()) {
-            Query<User> query = session.createQuery("FROM User", User.class);
+            Query<User> query = session.createQuery(GET_ALL_USERS_SQL, User.class);
+
             return query.list();
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при получении пользователей", e);

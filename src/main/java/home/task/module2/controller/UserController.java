@@ -8,6 +8,9 @@ import home.task.module2.service.impl.UserServiceImpl;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+/**
+ * Контроллер ввода данных для CRUD операций с пользователем
+ */
 public class UserController {
     /**
      * Сканер дя ввода данных
@@ -43,6 +46,9 @@ public class UserController {
         }
     }
 
+    /**
+     * Ввод данных для добавления пользователя
+     */
     private void add() {
         System.out.println("Добавление нового пользователя");
 
@@ -86,6 +92,9 @@ public class UserController {
         System.out.println(userService.add(new User(null, name, email, age, LocalDate.now())));
     }
 
+    /**
+     * Ввод данных для обновления пользователя
+     */
     private void update() {
         System.out.println("Обновление пользователя");
         Long id = checkId();
@@ -142,20 +151,34 @@ public class UserController {
         System.out.println(userService.update(user));
     }
 
+    /**
+     * Ввод данных для получения пользователя по id
+     */
     private void get() {
         Long id = checkId();
         System.out.println(userService.get(id));
     }
 
+    /**
+     * Получение всех пользователей
+     */
     private void getAll() {
         System.out.println(userService.getAll());
     }
 
+    /**
+     * Ввод данных для удаления пользователя по id
+     */
     private void delete() {
         Long id = checkId();
         userService.delete(id);
     }
 
+    /**
+     * Ввод id пользователя
+     *
+     * @return возврат id, если он введен корректно
+     */
     private Long checkId() {
         System.out.println("Введите id пользователя");
 
