@@ -8,24 +8,48 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 public class UserDAOImpl implements UserDAO {
-    /**
-     * Создаем SessionFactory
-     */
-    private static final SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
+    private final String url;
+    private final String password;
+    private final String userName;
 
-    /**
-     *  Создание сеансов (Session) работы с базой данных
-     */
-    static {
+    public UserDAOImpl(String url, String userName, String password) {
+        this.url = url;
+        this.password = password;
+        this.userName = userName;
+        setSessionFactory();
+    }
+
+    public UserDAOImpl() {
+        Properties properties = new Properties();
+        try {
+            properties.load((Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResourceAsStream("db.properties")));
+            url = properties.getProperty("hibernate.connection.url");
+            password = properties.getProperty("hibernate.connection.password");
+            userName = properties.getProperty("hibernate.connection.username");
+            setSessionFactory();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setSessionFactory() {
         try {
             Configuration configuration = new Configuration();
             Properties properties = new Properties();
             properties.load(Thread.currentThread()
                     .getContextClassLoader()
                     .getResourceAsStream("hibernate.properties"));
+            properties.put("hibernate.connection.url", url);
+            properties.put("hibernate.connection.password", password);
+            properties.put("hibernate.connection.username", userName);
             configuration.setProperties(properties);
             configuration.addAnnotatedClass(User.class);
             sessionFactory = configuration.buildSessionFactory();
@@ -34,12 +58,8 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
-    /**
-     * Добавление пользователя
-     * @param user - пользователь для добавления
-     */
     @Override
-    public void add(User user) {
+    public User add(User user) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -51,14 +71,11 @@ public class UserDAOImpl implements UserDAO {
             }
             throw new RuntimeException("Ошибка при создании пользователя", e);
         }
+        return user;
     }
 
-    /**
-     * Обновление пользователя
-     * @param user - пользователь для обновления
-     */
     @Override
-    public void update(User user) {
+    public User update(User user) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -70,41 +87,28 @@ public class UserDAOImpl implements UserDAO {
             }
             throw new RuntimeException("Ошибка при обновлении пользователя", e);
         }
+        return user;
     }
 
-    /**
-     * Получение пользователя
-     * @param id - id пользователя
-     */
     @Override
     public User get(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            User user = session.get(User.class, id);
-            System.out.println(user);
-
-            return user;
+            return session.get(User.class, id);
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при получении пользователя", e);
         }
     }
 
-    /**
-     * Получение всех пользователей
-     */
     @Override
-    public void getAll() {
+    public List<User> getAll() {
         try (Session session = sessionFactory.openSession()) {
             Query<User> query = session.createQuery("FROM User", User.class);
-            System.out.println(query.list());
+            return query.list();
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при получении пользователей", e);
         }
     }
 
-    /**
-     * Удаление пользователя
-     * @param id - id пользователя
-     */
     @Override
     public void delete(Long id) {
         Transaction transaction = null;
