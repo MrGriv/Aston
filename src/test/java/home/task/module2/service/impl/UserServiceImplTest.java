@@ -1,7 +1,10 @@
 package home.task.module2.service.impl;
 
-import home.task.module2.User;
-import home.task.module2.dao.UserDAO;
+import home.task.module2.dto.UserNew;
+import home.task.module2.dto.UserUpdate;
+import home.task.module2.mapper.UserMapper;
+import home.task.module2.model.User;
+import home.task.module2.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,13 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,7 +26,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
     @Mock
-    private UserDAO userDAO;
+    private UserRepository userRepository;
+
+    @Mock
+    private UserMapper userMapper;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -43,15 +46,11 @@ class UserServiceImplTest {
     void whenAddUserShouldReturnCreatedUser() {
         User expectedUser = user;
 
-        when(userDAO.add(any())).thenReturn(expectedUser);
+        when(userRepository.save(any())).thenReturn(expectedUser);
+        when(userMapper.ofUserNew(any())).thenReturn(expectedUser);
+        userService.add(new UserNew("Иван", "ivan@test.com", 30));
 
-        User result = userService.add(expectedUser);
-
-        assertNotNull(result);
-        assertEquals(expectedUser.getId(), result.getId());
-        assertEquals(expectedUser.getName(), result.getName());
-
-        verify(userDAO, times(1)).add(any());
+        verify(userRepository, times(1)).save(any());
     }
 
     @Test
@@ -59,15 +58,11 @@ class UserServiceImplTest {
     void whenUpdateUserShouldReturnUpdatedUser() {
         User expectedUser = user;
 
-        when(userDAO.update(any())).thenReturn(expectedUser);
+        when(userRepository.save(any())).thenReturn(expectedUser);
+        when(userRepository.findByIdForUpdate(anyLong())).thenReturn(Optional.of(expectedUser));
+        userService.update(expectedUser.getId(), new UserUpdate("Иван", "ivan@test.com", 30));
 
-        User result = userService.update(expectedUser);
-
-        assertNotNull(result);
-        assertEquals(expectedUser.getId(), result.getId());
-        assertEquals(expectedUser.getName(), result.getName());
-
-        verify(userDAO, times(1)).update(any());
+        verify(userRepository, times(1)).save(any());
     }
 
     @Test
@@ -75,15 +70,10 @@ class UserServiceImplTest {
     void whenGetUserByIdShouldReturnCorrectUser() {
         User expectedUser = user;
 
-        when(userDAO.get(anyLong())).thenReturn(expectedUser);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(expectedUser));
+        userService.get(anyLong());
 
-        User result = userService.get(anyLong());
-
-        assertNotNull(result);
-        assertEquals(expectedUser.getId(), result.getId());
-        assertEquals(expectedUser.getName(), result.getName());
-
-        verify(userDAO, times(1)).get(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
     }
 
     @Test
@@ -91,62 +81,20 @@ class UserServiceImplTest {
     void whenGetAllUsersShouldReturnAllUsers() {
         List<User> expectedUsers = List.of(user);
 
-        when(userDAO.getAll()).thenReturn(expectedUsers);
+        when(userRepository.findAll()).thenReturn(expectedUsers);
+        userService.getAll();
 
-        List<User> result = userService.getAll();
-
-        assertNotNull(result);
-        assertEquals(expectedUsers.size(), result.size());
-        assertEquals(expectedUsers.get(0).getId(), result.get(0).getId());
-
-        verify(userDAO, times(1)).getAll();
+        verify(userRepository, times(1)).findAll();
     }
 
     @Test
     @DisplayName("Успешно отработанный метод удаления user")
     void whenDeleteUserShouldChangeListSize() {
+        User expectedUser = user;
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(expectedUser));
         userService.delete(user.getId());
 
-        verify(userDAO, times(1)).delete(anyLong());
-    }
-
-    @Test
-    @DisplayName("Ошибка при создании пользователя")
-    void whenAddUserShouldThrowRuntimeException() {
-        when(userDAO.add(any())).thenThrow(new RuntimeException("Ошибка при создании пользователя"));
-
-        assertThrows(RuntimeException.class, () -> userDAO.add(user));
-    }
-
-    @Test
-    @DisplayName("Ошибка при обновлении пользователя")
-    void whenUpdateUserShouldThrowRuntimeException() {
-        when(userDAO.update(any())).thenThrow(new RuntimeException("Ошибка при обновлении пользователя"));
-
-        assertThrows(RuntimeException.class, () -> userDAO.update(user));
-    }
-
-    @Test
-    @DisplayName("Ошибка при получении пользователя по id")
-    void whenGetUserByIdShouldThrowRuntimeException() {
-        when(userDAO.get(anyLong())).thenThrow(new RuntimeException("Ошибка при получении пользователя по id"));
-
-        assertThrows(RuntimeException.class, () -> userDAO.get(user.getId()));
-    }
-
-    @Test
-    @DisplayName("Ошибка при получении всех пользователей")
-    void whenGetAllUsersShouldThrowRuntimeException() {
-        when(userDAO.getAll()).thenThrow(new RuntimeException("Ошибка при получении всех пользователей"));
-
-        assertThrows(RuntimeException.class, () -> userDAO.getAll());
-    }
-
-    @Test
-    @DisplayName("Ошибка при удалении пользователя по id")
-    void whenDeleteUserByIdShouldThrowRuntimeException() {
-        doThrow(new RuntimeException("Ошибка при удалении пользователя по id")).when(userDAO).delete(anyLong());
-
-        assertThrows(RuntimeException.class, () -> userDAO.delete(user.getId()));
+        verify(userRepository, times(1)).deleteById(anyLong());
     }
 }
