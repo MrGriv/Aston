@@ -1,4 +1,4 @@
-package home.task.module2;
+package home.task.module2.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

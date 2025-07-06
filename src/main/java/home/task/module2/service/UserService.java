@@ -1,6 +1,9 @@
 package home.task.module2.service;
 
-import home.task.module2.User;
+import home.task.module2.dto.UserDto;
+import home.task.module2.dto.UserNew;
+import home.task.module2.dto.UserUpdate;
+import home.task.module2.exception.NotFoundException;
 
 import java.util.List;
 
@@ -16,37 +19,43 @@ public interface UserService {
      *
      * @return возвращает пользователя с id, при успешном добавлении в бд
      */
-    User add(User user);
+    UserDto add(UserNew user);
 
     /**
      * Метод для обновления пользователя
      *
      * @param user - пользователь для обновления
      *
+     * @throws NotFoundException - если пользователя нет в бд пробрасывается ошибка
+     *
      * @return возвращает пользователя, при успешном обновлении
      */
-    User update(User user);
+    UserDto update(Long userId, UserUpdate user);
 
     /**
      * Метод для получения пользователя
      *
      * @param id - id пользователя
      *
+     * @throws NotFoundException - если пользователя нет в бд пробрасывается ошибка
+     *
      * @return возвращает пользователя, при успешном нахождении в бд
      */
-    User get(Long id);
+    UserDto get(Long id);
 
     /**
      * Метод для получения всех пользователей
      *
      * @return возвращает всех пользователей, при успешном получении данных из бд
      */
-    List<User> getAll();
+    List<UserDto> getAll();
 
     /**
      * Метод для удаления пользователя
      *
      * @param id - id пользователя
+     *
+     * @throws NotFoundException - если пользователя нет в бд пробрасывается ошибка
      */
     void delete(Long id);
 }

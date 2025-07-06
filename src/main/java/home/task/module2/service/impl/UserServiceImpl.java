@@ -1,51 +1,81 @@
 package home.task.module2.service.impl;
 
-import home.task.module2.User;
-import home.task.module2.dao.UserDAO;
+import home.task.module2.dto.UserDto;
+import home.task.module2.dto.UserNew;
+import home.task.module2.dto.UserUpdate;
+import home.task.module2.exception.NotFoundException;
+import home.task.module2.mapper.UserMapper;
+import home.task.module2.model.User;
+import home.task.module2.repository.UserRepository;
 import home.task.module2.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.logging.Logger;
 
+@Slf4j
+@Service
+@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserDAO userDAO;
-    private final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
-    public User add(User user) {
+    public UserDto add(UserNew userNew) {
+        User user = userMapper.ofUserNew(userNew);
+        user.setCreatedAt(LocalDate.now());
         log.info("User with name = " + user.getName() + ", email = " +
                 user.getEmail() + ", age = " + user.getAge() + " created");
 
-        return userDAO.add(user);
+        return userMapper.ofEntity(userRepository.save(user));
     }
 
     @Override
-    public User update(User user) {
-        log.info("User with ID = " + user.getId() + " updated.");
+    public UserDto update(Long userId, UserUpdate userUpdate) {
+        User user = findUserForUpdate(userId);
 
-        return userDAO.update(user);
+        userMapper.userOfUpdateUser(user, userUpdate);
+        User updatedUser = userRepository.save(user);
+        log.info("User with ID = " + updatedUser.getId() + " updated.");
+
+        return userMapper.ofEntity(updatedUser);
     }
 
     @Override
-    public User get(Long id) {
-        User user = userDAO.get(id);
+    @Transactional(readOnly = true)
+    public UserDto get(Long id) {
+        User user = findUserById(id);
         log.info("User with ID = " + id + " returned.");
 
-        return user;
+        return userMapper.ofEntity(user);
     }
 
     @Override
-    public List<User> getAll() {
+    @Transactional(readOnly = true)
+    public List<UserDto> getAll() {
         log.info("All users returned.");
 
-        return userDAO.getAll();
+        return userMapper.ofListEntities(userRepository.findAll());
     }
 
     @Override
     public void delete(Long id) {
+        findUserById(id);
         log.info("User with ID = " + id + " deleted.");
-        userDAO.delete(id);
+        userRepository.deleteById(id);
+    }
+
+    private User findUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("User с ID = %s не найден", id)));
+    }
+
+    private User findUserForUpdate(Long id) {
+        return userRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new NotFoundException(String.format("User с ID = %s не найден для обновления", id)));
     }
 }
