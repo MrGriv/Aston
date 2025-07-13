@@ -15,8 +15,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <testcontainers.version>1.21.3</testcontainers.version>
-        <greenmail.version>2.1.1</greenmail.version>
+        <kafka.test.version>3.1.1</kafka.test.version>
     </properties>
 
     <dependencies>
@@ -25,17 +24,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.icegreen</groupId>
-            <artifactId>greenmail-junit5</artifactId>
-            <version>${greenmail.version}</version>
-            <scope>test</scope>
-        </dependency>
 
+        <!--Tests-->
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>kafka</artifactId>
-            <version>${testcontainers.version}</version>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
+            <version>${kafka.test.version}</version>
             <scope>test</scope>
         </dependency>
 

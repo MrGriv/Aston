@@ -13,9 +13,17 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Конфигурация producer kafka
+ */
 @Configuration
 public class KafkaProducerConfig {
 
+    /**
+     * Фабрика Kafka‑продюсеров с настройками по умолчанию.
+     *
+     * @return фабрика продюсеров Kafka
+     */
     @Bean
     public ProducerFactory<String, MessageDto> producerFactory() {
         Map<String, Object> configProperties = new HashMap<>();
@@ -26,6 +34,11 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(configProperties);
     }
 
+    /**
+     * KafkaTemplate для отправки сообщений в Kafka.
+     *
+     * @return шаблон Kafka
+     */
     @Bean
     public KafkaTemplate<String, MessageDto> kafkaTemplate(ProducerFactory<String, MessageDto> producerFactory) {
         return new KafkaTemplate<>(producerFactory);

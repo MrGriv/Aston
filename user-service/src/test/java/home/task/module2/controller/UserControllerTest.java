@@ -110,11 +110,11 @@ class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(userDto.id()), Long.class))
-                .andExpect(jsonPath("$[0].name", is(userDto.name())))
-                .andExpect(jsonPath("$[0].email", is(userDto.email())))
-                .andExpect(jsonPath("$[0].age", is(userDto.age())))
-                .andExpect(jsonPath("$[0].createdAt", is(userDto.createdAt().toString())));
+                .andExpect(jsonPath("$[0].id", is(userDto.getId()), Long.class))
+                .andExpect(jsonPath("$[0].name", is(userDto.getName())))
+                .andExpect(jsonPath("$[0].email", is(userDto.getEmail())))
+                .andExpect(jsonPath("$[0].age", is(userDto.getAge())))
+                .andExpect(jsonPath("$[0].createdAt", is(userDto.getCreatedAt().toString())));
     }
 
     @Test

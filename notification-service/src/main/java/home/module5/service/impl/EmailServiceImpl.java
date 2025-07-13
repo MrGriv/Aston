@@ -18,13 +18,19 @@ public class EmailServiceImpl implements EmailService {
     @Value("${email-from}")
     private String from;
 
+    @Value("${texts.add}")
+    private String addText;
+
+    @Value("${texts.delete}")
+    private String deleteText;
+
     @Override
     public void send(MessageDto message) {
         String text;
 
         switch (message.operationType()) {
-            case "ADD" -> text = "Здравствуйте! Ваш аккаунт на сайте ваш сайт был успешно создан.";
-            case "DELETE" -> text = "Здравствуйте! Ваш аккаунт был удалён.";
+            case "ADD" -> text = addText;
+            case "DELETE" -> text = deleteText;
             default -> {
                 return;
             }
