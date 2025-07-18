@@ -52,16 +52,16 @@ class UserIntegratedTest {
         UserNew user = newUser;
 
         UserDto addedUser = userService.add(user);
-        UserDto retrievedUser = userService.get(addedUser.id());
+        UserDto retrievedUser = userService.get(addedUser.getId());
 
         assertNotNull(retrievedUser, "Добавленный пользователь должен быть найден в БД");
-        assertEquals("Иван", retrievedUser.name(),
+        assertEquals("Иван", retrievedUser.getName(),
                 "Имя должно соответствовать установленному значению");
-        assertEquals("k@mail.ru", retrievedUser.email(),
+        assertEquals("k@mail.ru", retrievedUser.getEmail(),
                 "Почта должна соответствовать установленному значению");
-        assertEquals(30, retrievedUser.age(),
+        assertEquals(30, retrievedUser.getAge(),
                 "Возраст должен соответствовать установленному значению");
-        assertEquals(LocalDate.now(), retrievedUser.createdAt(),
+        assertEquals(LocalDate.now(), retrievedUser.getCreatedAt(),
                 "Время создания должно соответствовать установленному значению");
     }
 
@@ -71,11 +71,11 @@ class UserIntegratedTest {
         UserUpdate updatedUser = new UserUpdate("Иван", "k@mail.ru", 777);
 
         UserDto addedUser = userService.add(newUser);
-        userService.update(addedUser.id(), updatedUser);
-        UserDto retrievedUser = userService.get(addedUser.id());
+        userService.update(addedUser.getId(), updatedUser);
+        UserDto retrievedUser = userService.get(addedUser.getId());
 
         assertNotNull(retrievedUser, "Обновленный пользователь должен быть найден в БД");
-        assertEquals(777, retrievedUser.age(), "Возраст должен измениться");
+        assertEquals(777, retrievedUser.getAge(), "Возраст должен измениться");
     }
 
     @Test
@@ -100,7 +100,7 @@ class UserIntegratedTest {
 
         assertFalse(userService.getAll().isEmpty(), "Пользователи должны быть найдены в БД");
 
-        userService.delete(addedUser.id());
+        userService.delete(addedUser.getId());
 
         assertTrue(userService.getAll().isEmpty(), "Пользователи не должны быть найдены в БД");
     }

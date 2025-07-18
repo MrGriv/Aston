@@ -28,3 +28,7 @@ spring:
 message-topic: messages
 
 email-from: iv4nrut@yandex.ru
+
+texts:
+  add: Здравствуйте! Ваш аккаунт на сайте ваш сайт был успешно создан.
+  delete: Здравствуйте! Ваш аккаунт был удалён.
