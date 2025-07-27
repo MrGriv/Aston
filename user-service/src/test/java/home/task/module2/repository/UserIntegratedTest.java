@@ -4,6 +4,7 @@ import home.task.module2.dto.user.UserDto;
 import home.task.module2.dto.user.UserNew;
 import home.task.module2.dto.user.UserUpdate;
 import home.task.module2.exception.NotFoundException;
+import home.task.module2.service.MessageKafkaProducer;
 import home.task.module2.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -38,6 +40,9 @@ class UserIntegratedTest {
 
     @Autowired
     private UserService userService;
+
+    @MockBean
+    private MessageKafkaProducer messageKafkaProducer;
 
     private UserNew newUser;
 

@@ -5,6 +5,7 @@ import home.task.module2.dto.user.UserUpdate;
 import home.task.module2.mapper.UserMapper;
 import home.task.module2.model.User;
 import home.task.module2.repository.UserRepository;
+import home.task.module2.service.MessageKafkaProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserMapper userMapper;
+
+    @Mock
+    private MessageKafkaProducer messageKafkaProducer;
 
     @InjectMocks
     private UserServiceImpl userService;

@@ -64,7 +64,7 @@ public class UserController {
     @Operation(summary = "Обновление пользователя по id")
     public EntityModel<UserDto> update(@RequestBody @Valid UserUpdate userUpdate,
                           @Parameter(description = "id пользователя", example = "1")
-                          @PathVariable Long userId) {
+                          @PathVariable("userId") Long userId) {
         return userAssembler.toModel(userService.update(userId, userUpdate));
     }
 
@@ -74,7 +74,7 @@ public class UserController {
     @GetMapping("/{userId}")
     @Operation(summary = "Получение пользователя по id")
     public EntityModel<UserDto> get(@Parameter(description = "id пользователя", example = "1")
-                                    @PathVariable Long userId) {
+                                    @PathVariable("userId") Long userId) {
         return userAssembler.toModel(userService.get(userId));
     }
 
@@ -93,7 +93,7 @@ public class UserController {
     @DeleteMapping("/{userId}")
     @Operation(summary = "Удаление пользователя по id")
     private ResponseEntity<Void> delete(@Parameter(description = "id пользователя", example = "1")
-                                        @PathVariable Long userId) {
+                                        @PathVariable("userId") Long userId) {
         userService.delete(userId);
 
         return ResponseEntity.noContent().build();
