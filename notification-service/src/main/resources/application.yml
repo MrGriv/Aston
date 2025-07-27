@@ -1,34 +1,6 @@
-server:
-  port: 8082
-
 spring:
-  main:
-    allow-bean-definition-overriding: true
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: messages-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
-  mail:
-    host: smtp.yandex.ru
-    port: 465
-    username: iv4nrut@yandex.ru
-    password: cggjhsrfmuniacfa
-    protocol: smtps
-    properties:
-      mail.smtp:
-        auth: true
-        ssl.enable: true
-        starttls.enable: false
-
-message-topic: messages
-
-email-from: iv4nrut@yandex.ru
-
-texts:
-  add: Здравствуйте! Ваш аккаунт на сайте ваш сайт был успешно создан.
-  delete: Здравствуйте! Ваш аккаунт был удалён.
+  application:
+    name: notification-service
+  cloud:
+    config:
+      uri: http://localhost:8888

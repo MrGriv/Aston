@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -33,23 +33,28 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Контроллер для работы с пользователями", description = "CRUD операции с пользователями ")
 public class UserController {
 
-    /**
-     * Интерфейс UserService
-     */
     private final UserService userService;
     private final UserDtoModelAssembler userAssembler;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     /**
-     * Ввод данных для добавления пользователя
+     * Ввод данных для добавления пользователя со spring cloud circuit breaker
      */
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Создание пользователя")
     public ResponseEntity<EntityModel<UserDto>> add(@RequestBody @Valid UserNew userNew) {
-        EntityModel<UserDto> model = userAssembler.toModel(userService.add(userNew));
-        return ResponseEntity
-                .created(model.getRequiredLink("self").toUri())
-                .body(model);
+        return circuitBreakerFactory.create("addUser")
+                .run(() -> new ResponseEntity<EntityModel<UserDto>>(userAssembler.toModel(userService.add(userNew)),
+                                HttpStatus.CREATED), throwable -> fallbackAdd());
+    }
+
+    /**
+     * Метод для реализации spring cloud circuit breaker. Выдает стандартный ответ, в случае, если kafka становится
+     * недоступна
+     */
+    public ResponseEntity<EntityModel<UserDto>> fallbackAdd() {
+        return new ResponseEntity<EntityModel<UserDto>>(userAssembler.toModel(UserDto.builder()
+                .id(0L).name("Cant create user. Kafka unavailable").build()), HttpStatus.CREATED);
     }
 
     /**

@@ -18,6 +18,9 @@
     <modules>
         <module>notification-service</module>
         <module>user-service</module>
+        <module>gateway</module>
+        <module>service-discovery</module>
+        <module>config-server</module>
     </modules>
 
     <properties>
@@ -28,14 +31,11 @@
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <org.apache.maven.plugins.version>3.5.1</org.apache.maven.plugins.version>
         <org.testcontainers.version>1.21.0</org.testcontainers.version>
+        <spring-cloud.version>2023.0.2</spring-cloud.version>
     </properties>
 
     <dependencies>
         <!--Starters-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
@@ -92,6 +92,18 @@
             <version>${lombok-mapstruct-binding.version}</version>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
