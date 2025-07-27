@@ -1,6 +1,7 @@
 package home.task.module2.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import home.task.module2.assembler.UserDtoModelAssembler;
 import home.task.module2.controller.UserController;
 import home.task.module2.dto.user.UserNew;
 import home.task.module2.dto.user.UserUpdate;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -33,6 +35,10 @@ class ErrorHandlerTest {
     @Autowired
     private ObjectMapper mapper;
 
+    @MockBean
+    private UserDtoModelAssembler assembler;
+    @MockBean
+    private CircuitBreakerFactory circuitBreakerFactory;
     @MockBean
     private UserService userService;
 
